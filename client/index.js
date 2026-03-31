@@ -1,97 +1,129 @@
+// Advanced Chatbot Frontend with Session Management and Intent Recognition
 document.addEventListener('DOMContentLoaded', () => {
     const chatForm = document.getElementById('chat-form');
     const userInput = document.getElementById('user-input');
     const chatBox = document.getElementById('chat-box');
     const sendBtn = document.getElementById('send-btn');
 
-    // Server API endpoint - default Flask port
-    const BACKEND_URL = 'http://127.0.0.1:5000/chat';
+    // Configuration
+    const BACKEND_URL = 'http://127.0.0.1:5000';
+    const SESSION_ID = generateSessionId();
+    const API = {
+        chat: `${BACKEND_URL}/chat`,
+        history: `${BACKEND_URL}/session/${SESSION_ID}/history`,
+        summary: `${BACKEND_URL}/session/${SESSION_ID}/summary`,
+        reset: `${BACKEND_URL}/session/${SESSION_ID}/reset`,
+        intents: `${BACKEND_URL}/intents`,
+        health: `${BACKEND_URL}/health`,
+        kbSearch: `${BACKEND_URL}/knowledge-base/search`
+    };
 
-    // Auto-focus input field on load
+    let messageCount = 0;
+    let isProcessing = false;
+
+    // Initialize
     userInput.focus();
+    checkServerHealth();
 
-    // Prevent submitting empty value just hitting enter
+    // Event Listeners
     userInput.addEventListener('input', () => {
         sendBtn.disabled = userInput.value.trim().length === 0;
     });
 
-    // Make sure button is initially synced to input empty state
     sendBtn.disabled = true;
 
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const message = userInput.value.trim();
-        if (!message) return;
+        if (!message || isProcessing) return;
 
-        // Add user message to UI
+        isProcessing = true;
         addMessage(message, 'user');
         
-        // Clear input and disable button
         userInput.value = '';
         sendBtn.disabled = true;
 
-        // Add typing indicator immediately
         const typingIndicator = addTypingIndicator();
 
         try {
-            // Send request to Flask Backend
-            const response = await fetch(BACKEND_URL, {
+            const response = await fetch(API.chat, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message,
+                    session_id: SESSION_ID
+                })
             });
 
             const data = await response.json();
 
-            // Setup smooth removal of typing indicator
             typingIndicator.style.opacity = '0';
             setTimeout(() => {
                 typingIndicator.remove();
                 
                 if (response.ok && data.reply) {
-                    addMessage(data.reply, 'bot');
+                    addMessage(data.reply, 'bot', {
+                        intent: data.intent,
+                        confidence: data.confidence,
+                        entities: data.entities
+                    });
                 } else {
-                    const errorMsg = data.error || 'The server responded with an error.';
-                    addMessage(errorMsg, 'bot', true);
+                    const errorMsg = data.error || 'An error occurred';
+                    addMessage(errorMsg, 'bot', { isError: true });
                 }
-            }, 300); // Wait for fade out animation
+                isProcessing = false;
+                userInput.focus();
+            }, 300);
 
         } catch (error) {
-            console.error('Error connecting to Server:', error);
+            console.error('Connection error:', error);
             
             typingIndicator.style.opacity = '0';
             setTimeout(() => {
                 typingIndicator.remove();
-                addMessage('Network error. Unable to reach the server. Is the Python backend running?', 'bot', true);
+                addMessage('Server connection failed. Make sure the backend is running.', 'bot', { isError: true });
+                isProcessing = false;
+                userInput.focus();
             }, 300);
-
-        } finally {
-            // Re-focus and enable input typing logic
-            userInput.focus();
         }
     });
 
-    function addMessage(text, sender, isError = false) {
+    function addMessage(text, sender, metadata = {}) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
+        messageDiv.style.animation = 'fadeIn 0.3s ease-in';
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         contentDiv.textContent = text;
         
-        if (isError) {
-            contentDiv.style.color = '#ef4444'; // Red-ish error text
+        if (metadata.isError) {
+            contentDiv.style.color = '#ef4444';
             contentDiv.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-            contentDiv.style.background = 'rgba(127, 29, 29, 0.2)'; 
+            contentDiv.style.background = 'rgba(127, 29, 29, 0.2)';
         }
 
         messageDiv.appendChild(contentDiv);
+
+        // Add metadata info for bot messages
+        if (sender === 'bot' && metadata.intent) {
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'message-meta';
+            metaDiv.style.fontSize = '11px';
+            metaDiv.style.opacity = '0.6';
+            metaDiv.style.marginTop = '4px';
+            metaDiv.textContent = `💡 Intent: ${metadata.intent} (${(metadata.confidence * 100).toFixed(0)}%)`;
+            
+            if (metadata.entities && Object.keys(metadata.entities).length > 0) {
+                metaDiv.textContent += ` | Entities: ${Object.keys(metadata.entities).join(', ')}`;
+            }
+            
+            messageDiv.appendChild(metaDiv);
+        }
+
+        messageCount++;
         chatBox.appendChild(messageDiv);
-        
-        // Scroll to the newest message smoothly
         scrollToBottom();
     }
 
@@ -111,19 +143,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
         messageDiv.appendChild(wrapperDiv);
         chatBox.appendChild(messageDiv);
-        
         scrollToBottom();
         
         return messageDiv;
     }
 
     function scrollToBottom() {
-        // Adding a slight delay to ensure DOM is updated before scrolling
         requestAnimationFrame(() => {
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
                 behavior: 'smooth'
             });
         });
+    }
+
+    function generateSessionId() {
+        // Create unique session ID based on timestamp and random value
+        return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    async function checkServerHealth() {
+        try {
+            const response = await fetch(API.health);
+            const data = await response.json();
+            console.log('Server status:', data.status);
+            return data.status === 'healthy';
+        } catch (error) {
+            console.warn('Server health check failed:', error);
+            return false;
+        }
+    }
+
+    // Advanced Features (exposed for debugging)
+    window.ChatbotDebug = {
+        sessionId: SESSION_ID,
+        messageCount: () => messageCount,
+        getHistory: async () => {
+            try {
+                const resp = await fetch(API.history);
+                return resp.json();
+            } catch (e) {
+                console.error('Failed to get history:', e);
+            }
+        },
+        getSummary: async () => {
+            try {
+                const resp = await fetch(API.summary);
+                return resp.json();
+            } catch (e) {
+                console.error('Failed to get summary:', e);
+            }
+        },
+        resetSession: async () => {
+            try {
+                const resp = await fetch(API.reset, { method: 'POST' });
+                chatBox.innerHTML = '<div class="message bot-message"><div class="message-content">Session reset. Starting fresh conversation...</div></div>';
+                messageCount = 0;
+                return resp.json();
+            } catch (e) {
+                console.error('Failed to reset:', e);
+            }
+        },
+        getIntents: async () => {
+            try {
+                const resp = await fetch(API.intents);
+                return resp.json();
+            } catch (e) {
+                console.error('Failed to get intents:', e);
+            }
+        }
+    };
+
+    // Add CSS animation for message fade-in
+    if (!document.getElementById('chatbot-animations')) {
+        const style = document.createElement('style');
+        style.id = 'chatbot-animations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .message { animation: fadeIn 0.3s ease-in; }
+        `;
+        document.head.appendChild(style);
     }
 });
