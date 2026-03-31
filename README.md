@@ -2,7 +2,7 @@
 
 A powerful, production-ready chatbot built entirely in Python without any external API dependencies. Features advanced NLP capabilities, session management, knowledge base integration, and intent recognition.
 
-## 🚀 Features
+##  Features
 
 ### Core Features
 - **Advanced NLP Engine** - Intent recognition, entity extraction, and context awareness
@@ -20,7 +20,7 @@ A powerful, production-ready chatbot built entirely in Python without any extern
 - **Custom Intents** - Add custom intents and patterns for specific domains
 - **Conversation Analytics** - Track conversation metrics and generate summaries
 
-## 📋 Tech Stack
+##  Tech Stack
 
 - **Backend**: Python 3.8+
 - **Framework**: Flask 2.3.3
@@ -28,7 +28,7 @@ A powerful, production-ready chatbot built entirely in Python without any extern
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
 - **NLP**: Custom Python NLP engine (no heavy dependencies)
 
-## 🛠️ Installation
+##  Installation
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -68,7 +68,7 @@ python -m http.server 8000 --directory client
 
 Access the chatbot at `http://localhost:8000`
 
-## 📚 Project Structure
+##  Project Structure
 
 ```
 chatbot/
@@ -88,7 +88,7 @@ chatbot/
 └── README.md              # This file
 ```
 
-## 🎯 Core Components
+##  Core Components
 
 ### 1. NLP Engine (`utils/nlp_engine.py`)
 Handles natural language processing with:
@@ -139,7 +139,7 @@ generator = ResponseGenerator(knowledge_base)
 response = generator.generate_response(intent_data, user_input, context)
 ```
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 ### Chat Endpoint
 **POST** `/chat`
@@ -172,7 +172,7 @@ curl -X POST http://127.0.0.1:5000/chat \
 - **GET** `/stats` - Get chatbot statistics
 - **GET** `/` - API documentation
 
-## 💻 Usage Examples
+##  Usage Examples
 
 ### Basic Chat
 ```javascript
@@ -206,16 +206,16 @@ for result in results:
     print(f"Content: {result['content']}")
 ```
 
-## 🧪 Debug Console
+##  Debug Console
 
 The frontend includes a debug console accessible via the 🔧 button:
 
 **Available Features:**
-- 📝 **Show History** - View all messages in current session
-- 📊 **Show Summary** - Get session statistics
-- 💡 **List Intents** - View all available intents
-- 🗑️ **Clear Logs** - Clear debug log messages
-- 🔄 **Reset Chat** - Reset conversation
+-  **Show History** - View all messages in current session
+-  **Show Summary** - Get session statistics
+-  **List Intents** - View all available intents
+-  **Clear Logs** - Clear debug log messages
+-  **Reset Chat** - Reset conversation
 
 **Debug API (JavaScript Console):**
 ```javascript
@@ -235,7 +235,7 @@ ChatbotDebug.getIntents();
 ChatbotDebug.resetSession();
 ```
 
-## 🎨 Customization
+##  Customization
 
 ### Adding New Intents
 Edit `server/utils/nlp_engine.py` in the `_initialize_patterns()` method:
@@ -261,7 +261,7 @@ Modify `client/style.css` to customize the UI:
 - Animations for message transitions
 - Responsive design for mobile devices
 
-## 🚀 Deployment
+##  Deployment
 
 ### Local Development
 ```bash
@@ -277,21 +277,21 @@ pip install gunicorn
 gunicorn --workers 4 --bind 0.0.0.0:5000 server.app:app
 ```
 
-## 📈 Performance Considerations
+##  Performance Considerations
 
 - **Message Caching**: Conversation history is cached in memory
 - **NLP Optimization**: Similarity calculations use efficient algorithms
 - **No External Calls**: Everything runs locally for fast responses
 - **Scalability**: Session management allows multiple concurrent users
 
-## 🔒 Security Notes
+##  Security Notes
 
 - The chatbot runs locally with no external API calls
 - Session IDs are generated client-side (use UUIDs in production)
 - Input is validated before processing
 - No sensitive data is logged by default
 
-## 🤝 Contributing
+##  Contributing
 
 To extend the chatbot:
 
@@ -300,11 +300,11 @@ To extend the chatbot:
 3. Customize response templates in `response_generator.py`
 4. Enhance frontend UI in `index.html` and `style.css`
 
-## 📝 License
+##  License
 
 This project is open source and available for educational and commercial use.
 
-## 🆘 Troubleshooting
+##  Troubleshooting
 
 ### Server Connection Failed
 - Ensure the Flask server is running on port 5000
@@ -321,7 +321,7 @@ This project is open source and available for educational and commercial use.
 - Check response generator templates
 - Verify session is properly initialized
 
-## 📞 Support
+##  Support
 
 For issues or questions:
 1. Check the debug console for error messages
