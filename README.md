@@ -1,17 +1,23 @@
-# Nexus AI - Advanced Chatbot System
+# ❄ KYUREM — Unova Boundary Chatbot
 
-A powerful, production-ready chatbot built entirely in Python without any external API dependencies. Features advanced NLP capabilities, session management, knowledge base integration, and intent recognition.
+Professional minimal chatbot named **Kyurem** (#646, Dragon/Ice, Unova region).
+Flask backend + vanilla HTML/CSS/JS frontend. Brain: **Gemini 3.8 Flash**.
 
+<<<<<<< HEAD
 ##  Features
+=======
+Recreated from the old Nexus AI project:
+- Old: local regex NLP engine (`nlp_engine.py`) + knowledge base + glassmorphism demo UI, frontend in `client/` served separately.
+- New: real LLM brain via Gemini API, Flask serves both API + UI, session memory, professional minimal Unova theme.
+>>>>>>> f06b5d9 (Kyurem)
 
-### Core Features
-- **Advanced NLP Engine** - Intent recognition, entity extraction, and context awareness
-- **Knowledge Base System** - Customizable database for facts, Q&A pairs, and topics
-- **Session Management** - Multi-session support with conversation history tracking
-- **Response Generation** - Intelligent response generation with multiple templates
-- **No API Dependencies** - Runs entirely locally without requiring external APIs
-- **RESTful API** - Complete REST API for easy integration
+## Theme
+- **Dark = Black Kyurem** — black shell `#04070D`, electric ice-blue `#38BDF8`, gold eyes `#FACC15`
+- **Light = White Kyurem** — white frost `#FFFFFF`, deep ice-blue `#0284C7`, solar gold `#B45309`
+- Toggle with ◐ button (persisted in localStorage). Minimal, no clutter.
+- Logo: your provided Kyurem head art → save as `static/kyurem.png` (see below).
 
+<<<<<<< HEAD
 ### Advanced Capabilities
 - **Intent Recognition** - Automatically identifies user intent with confidence scoring
 - **Entity Extraction** - Extracts entities like names, numbers, emails, URLs
@@ -39,26 +45,66 @@ A powerful, production-ready chatbot built entirely in Python without any extern
 1. **Navigate to the project directory**
 ```bash
 cd c:\Users\ankit\Documents\python\chatbot
+=======
+## Project structure
+```
+chatbot/
+├── server/
+│   ├── app.py                  # Flask app (serves UI + /api/*)
+│   └── utils/
+│       ├── gemini_brain.py     # Gemini 3.8 Flash wrapper + offline fallback
+│       ├── nlp_engine.py       # (legacy, no longer used)
+│       ├── knowledge_base.py   # (legacy)
+│       └── response_generator.py
+├── templates/
+│   └── index.html              # Kyurem UI
+├── static/
+│   ├── style.css               # Black/White Kyurem themes
+│   ├── app.js                  # chat logic, theme, sessions
+│   └── kyurem.png              # <-- SAVE YOUR LOGO IMAGE HERE
+├── requirements.txt
+├── .env.example
+└── README.md
+>>>>>>> f06b5d9 (Kyurem)
 ```
 
-2. **Create a virtual environment (optional but recommended)**
+## Setup
+
+1. **Save the logo**
+   Save the Kyurem head image you sent as `static/kyurem.png`.
+   The app works without it (falls back to a "K" mark), but the logo completes the look.
+
+2. **Install**
 ```bash
 python -m venv venv
-.\venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Run the backend server**
+3. **Configure Gemini**
+```bash
+copy .env.example .env
+# edit .env → GEMINI_API_KEY=your_key_from_aistudio
+```
+Get a key: https://aistudio.google.com/apikey
+Model defaults to `gemini-3.8-flash` (verified live Sep 2026). Override with `GEMINI_MODEL` if needed.
+
+Without a key the bot runs in **offline ice mode** with Kyurem lore fallback replies.
+
+4. **Run**
 ```bash
 python server/app.py
 ```
+Open http://127.0.0.1:5000
 
-The server will start on `http://127.0.0.1:5000`
+## API
+- `POST /api/chat` `{message, session_id}` → `{reply, session_id, model}`
+- `GET /api/history/<session_id>`
+- `POST /api/clear` `{session_id}` → new session
+- `GET /api/health`, `GET /api/model`
+- Legacy alias `POST /chat` still works.
 
+<<<<<<< HEAD
 5. **Open the frontend**
 Open `client/index.html` in your web browser or serve it with a local server:
 ```bash
@@ -334,3 +380,8 @@ For issues or questions:
 **Version**: 1.0.0  
 **Last Updated**: 2026-03-31  
 **Status**: Production Ready
+=======
+## Notes
+- Sessions are in-memory (last 60 msgs kept, last 20 sent to Gemini + system prompt).
+- Old `client/` folder is superseded by `templates/` + `static/` but left intact.
+>>>>>>> f06b5d9 (Kyurem)

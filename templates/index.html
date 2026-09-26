@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyurem — Unova Boundary AI</title>
+<meta name="description" content="Kyurem, the Boundary Pokémon from Unova. A minimal professional chatbot powered by Gemini 3.8 Flash.">
+<link rel="icon" type="image/png" href="/static/kyurem.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo-wrap">
+        <img src="/static/kyurem.png" alt="Kyurem logo" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="logo-fallback" style="display:none">K</div>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">KYUREM</div>
+        <div class="brand-sub">#646 · Boundary Pokémon</div>
+      </div>
+    </div>
+
+    <button class="new-chat" id="new-chat-btn">
+      <span class="plus">+</span> New chat
+    </button>
+
+    <div class="model-card">
+      <div class="model-row">
+        <span class="pulse"></span>
+        <span class="model-name">Gemini 3.8 Flash</span>
+      </div>
+      <div class="model-sub" id="model-status">connecting…</div>
+      <div class="forme-tags">
+        <span class="tag tag-black">⬢ Black Kyurem · Dark</span>
+        <span class="tag tag-white">⬣ White Kyurem · Light</span>
+      </div>
+    </div>
+
+    <div class="lore-card">
+      <div class="lore-title">TAO TRIO · UNOVA</div>
+      <p>Reshiram is truth. Zekrom is ideals.<br><strong>Kyurem is the boundary</strong> — the empty husk waiting in the Giant Chasm.</p>
+      <div class="lore-forms">
+        <div><span class="dot dot-blue"></span>Black · Freeze Shock</div>
+        <div><span class="dot dot-gold"></span>White · Ice Burn</div>
+      </div>
+    </div>
+
+    <div class="side-footer">
+      <div class="theme-row">
+        <span class="muted">Theme</span>
+        <button class="theme-toggle" id="theme-toggle-side" title="Toggle theme">
+          <span class="tt-icon">◐</span><span class="tt-label">Black / White</span>
+        </button>
+      </div>
+      <div class="ver">Kyurem v2.0 · Flask + Gemini</div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="menu-btn" title="Menu">☰</button>
+      <div class="top-brand">
+        <div class="logo-wrap sm">
+          <img src="/static/kyurem.png" alt="Kyurem" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="logo-fallback smf" style="display:none">K</div>
+        </div>
+        <div>
+          <div class="top-title">Kyurem</div>
+          <div class="top-sub"><span class="status-dot"></span><span id="status-text">Online</span> · Unova Region</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="theme-btn" title="Toggle Black / White Kyurem theme">◐</button>
+        <button class="icon-btn" id="clear-btn" title="New chat">⟲</button>
+      </div>
+    </header>
+
+    <div class="chat" id="chat">
+      <!-- welcome message injected by JS if empty -->
+    </div>
+
+    <div class="suggestions" id="suggestions">
+      <button data-q="Who is Kyurem? Explain the Tao trio and Unova lore.">Who is Kyurem?</button>
+      <button data-q="Black Kyurem vs White Kyurem — stats, signature moves, lore differences?">Black vs White Kyurem?</button>
+      <button data-q="Tell me about the Unova region and the Giant Chasm.">Unova region?</button>
+      <button data-q="What can you do? Show me your capabilities.">What can you do?</button>
+    </div>
+
+    <footer class="composer-wrap">
+      <form class="composer" id="composer">
+        <textarea id="input" rows="1" placeholder="Ask Kyurem anything…" autocomplete="off"></textarea>
+        <button type="submit" id="send" aria-label="Send" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </form>
+      <div class="disclaimer">Powered by <strong>Gemini 3.8 Flash</strong> · Dark = Black Kyurem · Light = White Kyurem</div>
+    </footer>
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
