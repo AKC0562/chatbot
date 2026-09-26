@@ -106,13 +106,14 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, session_id: sid })
       });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
       const d = await r.json();
       t.remove();
       if (d.reply) { if (d.session_id) { sid = d.session_id; localStorage.setItem('kyurem-sid', sid); } addMsg(d.reply, 'bot'); }
       else addMsg('My ice flickered — ' + (d.error || 'unknown error'), 'bot');
     } catch {
       t.remove();
-      addMsg('Cannot reach the Giant Chasm (server offline). Start Flask with `python server/app.py`.', 'bot');
+      addMsg('Cannot reach server. Open the Flask-served page http://127.0.0.1:5000 (not client/index.html, not file://) and hard-refresh (Ctrl+Shift+R).', 'bot');
     }
     busy = false; input.focus();
   }
@@ -140,12 +141,22 @@
   /* ---------- health ---------- */
   async function health() {
     try {
-      const r = await fetch(API.health); const d = await r.json();
-      statusText.textContent = d.gemini_online ? 'Online' : 'Offline mode';
-      modelStatus.textContent = d.model + (d.gemini_online ? ' · live' : ' · needs GEMINI_API_KEY');
-    } catch {
-      statusText.textContent = 'Offline';
-      modelStatus.textContent = 'server unreachable';
+      const r = await fetch(API.health, { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      console.log('[Kyurem] health:', d);
+      if (d.gemini_online) {
+        statusText.textContent = 'Online';
+        modelStatus.textContent = d.model + ' · live';
+      } else {
+        // Server IS reachable — only the AI key is missing. Don't call this "offline".
+        statusText.textContent = 'Online (limited AI)';
+        modelStatus.textContent = d.model + ' · server up, needs GEMINI_API_KEY';
+      }
+    } catch (err) {
+      console.warn('[Kyurem] health check failed:', err);
+      statusText.textContent = 'Unreachable';
+      modelStatus.textContent = 'open http://127.0.0.1:5000 (Flask), not file://';
     }
   }
 

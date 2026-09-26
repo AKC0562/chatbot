@@ -52,6 +52,12 @@ def health():
     })
 
 
+# Alias for old client + uptime monitors
+@app.route("/health", methods=["GET"])
+def health_alias():
+    return health()
+
+
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     try:
